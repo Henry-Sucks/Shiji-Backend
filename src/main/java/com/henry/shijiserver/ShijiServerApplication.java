@@ -10,7 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @MapperScan("com.henry.shijiserver.dao")
 public class ShijiServerApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(ShijiServerApplication.class, args);
 	}
