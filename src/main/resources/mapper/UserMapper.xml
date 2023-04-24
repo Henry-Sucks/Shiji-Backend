@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.henry.shijiserver.dao.UserMapper">
+    <resultMap id="BaseResultMap" type="com.henry.shijiserver.domain.User">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="username" property="username" jdbcType="VARCHAR" />
+        <result column="password" property="password" jdbcType="VARCHAR" />
+        <result column="sex" property="sex" jdbcType="TINYINT" />
+        <result column="phone_num" property="phoneNum" jdbcType="CHAR" />
+        <result column="email" property="email" jdbcType="CHAR" />
+        <result column="birth" property="birth" jdbcType="TIMESTAMP" />
+        <result column="introduction" property="introduction" jdbcType="VARCHAR" />
+        <result column="location" property="location" jdbcType="VARCHAR" />
+        <result column="avatar" property="avatar" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+<!--     可以简化语句的编写  -->
+    <sql id="Base_Column_List">
+        id, username, password, sex, phone_num, email, birth, introduction, location, avatar, create_time, update_time
+    </sql>
+
+    <select id="userOfId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List" />
+        from user
+<!--        插值-->
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="verifyPassword" resultType="java.lang.Integer">
+        SELECT count(*) FROM user where username = #{0} and password = #{1} ;
+    </select>
+
+    <select id="existUsername" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select count(*)
+        from user
+        where username = #{username, jdbcType=VARCHAR}
+    </select>
+
+<!--    resultMap作为返回值-->
+    <select id="loginStatus" resultMap="BaseResultMap">
+        select *
+        from user
+        where username = #{username,jdbcType=INTEGER}
+    </select>
+
+    <select id="allUser" resultMap="BaseResultMap">
+        select *
+        from user
+    </select>
+
+    <delete id="deleteUser" parameterType="java.lang.Integer">
+        delete from user
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+<!--    实体类作为参数-->
+    <insert id="insert" parameterType="com.henry.shijiserver.domain.User">
+        insert into user (
+        <include refid="Base_Column_List" />
+        )
+        values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{sex,jdbcType=TINYINT}, #{phoneNum,jdbcType=CHAR}, #{email,jdbcType=CHAR}, #{birth,jdbcType=TIMESTAMP}, #{introduction,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR}, #{avatar,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+<!--    trim标签是Mybatis框架中的一个标签，用于修剪字符串。
+        trim标签有四个属性：prefix、suffix、prefixOverrides和suffixOverrides。prefix属性指定在字符串前添加的内容，suffix属性指定在字符串后添加的内容，prefixOverrides属性指定需要覆盖的前缀内容，suffixOverrides属性指定需要覆盖的后缀内容。
+        trim标签可以用于去除SQL语句中多余的空格和逗号等字符。-->
+    <insert id="insertSelective" parameterType="com.henry.shijiserver.domain.User">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username != null">
+                username,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="phoneNum != null">
+                phone_num,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="birth != null">
+                birth,
+            </if>
+            <if test="introduction != null">
+                introduction,
+            </if>
+            <if test="location != null">
+                location,
+            </if>
+            <if test="avatar != null">
+                avatar,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="username != null"> #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null"> #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null"> #{sex,jdbcType=TINYINT},
+            </if>
+            <if test="phoneNum != null"> #{phoneNum,jdbcType=CHAR},
+            </if>
+            <if test="email != null"> #{email,jdbcType=CHAR},
+            </if>
+            <if test="birth != null"> #{birth,jdbcType=TIMESTAMP},
+            </if>
+            <if test="introduction != null"> #{introduction,jdbcType=VARCHAR},
+            </if>
+            <if test="location != null"> #{location,jdbcType=VARCHAR},
+            </if>
+            <if test="avatar != null"> #{avatar,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null"> #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null"> #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+<!--    在XML中，set标签是Mybatis框架中的一个标签，用于设置SQL语句中的参数。
+        set标签可以用于更新操作，用于设置需要更新的字段和值。set标签中的内容会被拼接到SQL语句的SET关键字后面，用于设置需要更新的字段和值。
+        set标签可以与where标签一起使用，用于设置更新操作的条件。-->
+    <update id="updateUserMsg" parameterType="com.henry.shijiserver.domain.User">
+        update user
+        <set >
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=TINYINT},
+            </if>
+            <if test="phoneNum != null">
+                phone_num = #{phoneNum,jdbcType=CHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=CHAR},
+            </if>
+            <if test="birth != null">
+                birth = #{birth,jdbcType=TIMESTAMP},
+            </if>
+            <if test="introduction != null">
+                introduction = #{introduction,jdbcType=VARCHAR},
+            </if>
+            <if test="location != null">
+                location = #{location,jdbcType=VARCHAR},
+            </if>
+            <if test="avatar != null">
+                avatar = #{avatar,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateUserAvatar" parameterType="com.henry.shijiserver.domain.User">
+        update user
+        <set >
+            <if test="avatar != null">
+                avatar = #{avatar,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <update id="updatePassword" parameterType="com.henry.shijiserver.domain.User">
+        update user
+        <set >
+            <if test="password != null">
+                password = #{password, jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.henry.shijiserver.domain.User">
+        update user
+        set username = #{username,jdbcType=VARCHAR},
+        password = #{password,jdbcType=VARCHAR},
+        sex = #{sex,jdbcType=TINYINT},
+        phone_num = #{phoneNum,jdbcType=CHAR},
+        email = #{email,jdbcType=CHAR},
+        birth = #{birth,jdbcType=TIMESTAMP},
+        introduction = #{introduction,jdbcType=VARCHAR}
+        location = #{location,jdbcType=VARCHAR},
+        avatar = #{avatar,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>
